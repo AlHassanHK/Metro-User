@@ -11,7 +11,7 @@ const users = prisma.User; //use users.findMany() for example, instead of typing
 
 const getAllUsers = async (req, res,id) => {
   try {
-    const allUsers = await users.findMany();
+    const allUsers = await users.findMany();//check with Al Hassan 
     res.status(200).json(allUsers);
   } catch (error) {
     res.status(400).send(error.message);
@@ -20,13 +20,13 @@ const getAllUsers = async (req, res,id) => {
 
 const getUser = async (req, res) => {
   try {
-    const id=req.params.id;
+    const {id}=req.body;
     const user = await prisma.user.findUnique({
       where: {
         id: id,
       },
     })
-    res.status(200).json(user);
+    res.status(200).json({data: {hello:"from trip service"}});
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -43,10 +43,10 @@ const updateUser = async (req, res) => {
         name:name,
         email:email,
         phoneNumber:phoneNumber,
-        password:password
+        password
       }
     })
-    res.status(200).json(updatedUser);
+    res.status(200).json({data: {hello:"from trip service"}});
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -54,13 +54,8 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const id = red.params.id;
-    const deleteduser= await users.delete({
-      where:{
-        id:id
-      }
-    })
-    res.status(200).json(deleteduser);
+    
+    res.status(200).json({data: {hello:"from trip service"}});
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -70,7 +65,4 @@ const deleteUser = async (req, res) => {
 
 export default {
   getAllUsers,
-  getUser,
-  updateUser,
-  deleteUser
 };

@@ -5,9 +5,7 @@ const router = express.Router();
 //define function logic in controller
 router.route("/").get(userController.getAllUsers);
 router.route("/:id").get(userController.getUser);
-router.route("/").patch(userController.updateUser);
-router.route("/:id").delete(userController.deleteUser);
-
+router.route("/update").
 
 
 export default router;  

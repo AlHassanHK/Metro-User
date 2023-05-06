@@ -70,7 +70,5 @@ const deleteUser = async (req, res) => {
 
 export default {
   getAllUsers,
-  getUser,
-  updateUser,
-  deleteUser
+  
 };

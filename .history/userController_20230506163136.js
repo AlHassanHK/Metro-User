@@ -72,5 +72,5 @@ export default {
   getAllUsers,
   getUser,
   updateUser,
-  deleteUser
+  
 };

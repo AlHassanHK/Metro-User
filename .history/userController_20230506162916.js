@@ -11,7 +11,7 @@ const users = prisma.User; //use users.findMany() for example, instead of typing
 
 const getAllUsers = async (req, res,id) => {
   try {
-    const allUsers = await users.findMany();
+    const allUsers = await users.findMany();//check with Al Hassan 
     res.status(200).json(allUsers);
   } catch (error) {
     res.status(400).send(error.message);
@@ -60,7 +60,7 @@ const deleteUser = async (req, res) => {
         id:id
       }
     })
-    res.status(200).json(deleteduser);
+    res.status(200).json(delete);
   } catch (error) {
     res.status(400).send(error.message);
   }
@@ -70,7 +70,4 @@ const deleteUser = async (req, res) => {
 
 export default {
   getAllUsers,
-  getUser,
-  updateUser,
-  deleteUser
 };
