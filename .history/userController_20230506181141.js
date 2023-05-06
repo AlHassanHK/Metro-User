@@ -20,7 +20,7 @@ const getAllUsers = async (req, res) => {
 
 const getUser = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id=req.params.id;
     const user = await prisma.user.findUnique({
       where: {
         id: id,
@@ -34,16 +34,16 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { id, email, phoneNumber, name, password } = req.body;
-    const updatedUser = await users.update({
-      where: {
-        id: id
+    const{id,email,phoneNumber,name,password}=req.body;
+    const updatedUser= await users.update({
+      where:{
+        id:id
       },
-      data: {
-        name: name,
-        email: email,
-        phoneNumber: phoneNumber,
-        password: password
+      data:{
+        name:name,
+        email:email,
+        phoneNumber:phoneNumber,
+        password:password
       }
     })
     res.status(200).json(updatedUser);
@@ -55,9 +55,9 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const id = red.params.id;
-    const deletedUser = await users.delete({
-      where: {
-        id: id
+    const deleteduser= await users.delete({
+      where:{
+        id:id
       }
     })
     res.status(200).json(deleteduser);

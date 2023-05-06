@@ -55,7 +55,7 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const id = red.params.id;
-    const deletedUser = await users.delete({
+    const deleteduser = await users.delete({
       where: {
         id: id
       }
