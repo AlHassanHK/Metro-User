@@ -66,11 +66,31 @@ const deleteUser = async (req, res) => {
   }
 };
 
+const getUserSubscription = async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    console.log(typeof id);
+    const subscription = await users.findUnique({
+
+      where: {
+        id: id
+      },
+      select: {
+        name:true,
+        subscription: true
+      }
+    });
+    res.status(200).json(subscription)
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+};
 
 
 export default {
   getAllUsers,
   getUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  getUserSubscription
 };
