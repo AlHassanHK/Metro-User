@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 
 //Database enums, user RideStatus.pending for example
 import { UserRole } from "@prisma/client";
@@ -6,6 +6,11 @@ import { RouteId } from "@prisma/client";
 import { RefundRequestStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
+
+
+
+
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
 
@@ -76,21 +81,60 @@ const getUserSubscription = async (req, res) => {
         id: id
       },
       select: {
-        name:true,
+        name: true,
         subscription: true
       }
     });
-    res.status(200).json(subscription)
+    res.status(200).json(subscription);
   } catch (error) {
     res.status(400).send(error.message);
   }
 };
 
+const getUserTrips = async (req, res) => {
+  let filteredOutput = {};
+  try {
+    const id = parseInt(req.params.id);
+    const result = await prisma.user.findUnique({
+      where: {
+        id: id,
+
+      },
+      include: {
+        rides: true,
+      },
+
+    })
+    const rides = result.rides;
+    const userName = result.name;
+
+    filteredOutput["name"] = userName;
+
+    filteredOutput["rideList"] = {...rides};
+    
+    console.log(filteredOutput);
+
+
+    // filteredOutput.name = result.name;
+    // filteredOutput[]
+
+
+
+    res.status(200).json(filteredOutput);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+}
 
 export default {
   getAllUsers,
   getUser,
   updateUser,
   deleteUser,
-  getUserSubscription
+  getUserSubscription,
+  getUserTrips
 };
+
+
+
+
