@@ -107,16 +107,11 @@ const getUserTrips = async (req, res) => {
     })
     const rides = result.rides;
     const userName = result.name;
-
     filteredOutput["name"] = userName;
-
-    filteredOutput["rideList"] = {...rides};
-    
-    console.log(filteredOutput);
+    filteredOutput["rideList"] = { ...rides };
 
 
-    // filteredOutput.name = result.name;
-    // filteredOutput[]
+
 
 
 
@@ -134,7 +129,6 @@ export default {
   getUserSubscription,
   getUserTrips
 };
-
 
 
 
