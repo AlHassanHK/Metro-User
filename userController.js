@@ -39,7 +39,7 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { id, email, phoneNumber, name, password } = req.body;
+    const { id, email, phoneNumber, name, password, isSenior } = req.body;
     const updatedUser = await users.update({
       where: {
         id: id
@@ -48,7 +48,8 @@ const updateUser = async (req, res) => {
         name: name,
         email: email,
         phoneNumber: phoneNumber,
-        password: password
+        password: password,
+        isSenior: isSenior
       }
     })
     res.status(200).json(updatedUser);
