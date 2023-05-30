@@ -121,13 +121,36 @@ const getUserTrips = async (req, res) => {
   }
 }
 
+
+const registerUser = async (req, res) => {
+  const { name, phoneNumber, password, email} = req.body;
+
+  try {
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        phoneNumber,
+        role: 'User',
+        password,
+        email,
+        isSenior: false,
+      },
+    });
+
+    res.status(200).json({ data: newUser });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
 export default {
   getAllUsers,
   getUser,
   updateUser,
   deleteUser,
   getUserSubscription,
-  getUserTrips
+  getUserTrips,
+  registerUser
 };
 
 
