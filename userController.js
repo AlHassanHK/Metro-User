@@ -124,11 +124,12 @@ const getUserTrips = async (req, res) => {
 
 
 const registerUser = async (req, res) => {
-  const { name, phoneNumber, password, email} = req.body;
+  const { id, name, phoneNumber, password, email} = req.body;
 
   try {
     const newUser = await prisma.user.create({
       data: {
+        id,  // saving Supabase user_id
         name,
         phoneNumber,
         role: 'User',
@@ -142,7 +143,7 @@ const registerUser = async (req, res) => {
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 export default {
   getAllUsers,
