@@ -4,7 +4,6 @@ import { PrismaClient, Prisma } from "@prisma/client";
 import { UserRole } from "@prisma/client";
 import { RouteId } from "@prisma/client";
 import { RefundRequestStatus } from "@prisma/client";
-import { SeniorRequestStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -15,7 +14,6 @@ const prisma = new PrismaClient();
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
 const refundRequest = prisma.RefundRequest;
-const seniorRequest = prisma.SeniorRequest;
 
 const getAllUsers = async (req, res) => {
   try {
@@ -150,49 +148,25 @@ const registerUser = async (req, res) => {
 
 
 const createRefundRequest = async (req, res) => {
-  const { userId, description, tripId } = req.body;
+  const {userId,description,status,tripId,trip } = req.body;
 
   try {
     const newRefundRequest = await refundRequest.create({
       data: {
-        userId,
+        userId, 
         description,
         createdAt: new Date(),
-        status: RefundRequestStatus.Pending,
-        tripId
+        status,
+       
+
       },
     });
 
-    res.status(200).json({ data: newRefundRequest });
+    res.status(200).json({ data: newUser });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
-const createSeniorRequest = async (req, res) => {
-  const { id, userId, idImage } = req.body;
-
-  try {
-    const newSeniorRequest = await seniorRequest.create({
-      data: {
-        id,
-        userId,
-        idImage,
-        createdAt: new Date(),
-        status: SeniorRequestStatus.Pending,
-      },
-    });
-
-    res.status(200).json({ data: newSeniorRequest });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-
-
-
-
 
 
 
@@ -206,9 +180,7 @@ export default {
   deleteUser,
   getUserSubscription,
   getUserTrips,
-  registerUser,
-  createRefundRequest,
-  createSeniorRequest
+  registerUser
 };
 
 

@@ -11,7 +11,7 @@ router.route("/register").post(userController.registerUser);
 router.route("/").patch(userController.updateUser);
 router.route("/:id").delete(userController.deleteUser);
 router.route("/refund").post(userController.createRefundRequest);
-router.route("/senior").post(userController.createSeniorRequest);
+router.route("/senior").post(userController.);
 
 
 

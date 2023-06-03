@@ -15,7 +15,6 @@ const prisma = new PrismaClient();
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
 const refundRequest = prisma.RefundRequest;
-const seniorRequest = prisma.SeniorRequest;
 
 const getAllUsers = async (req, res) => {
   try {
@@ -170,27 +169,35 @@ const createRefundRequest = async (req, res) => {
 };
 
 const createSeniorRequest = async (req, res) => {
-  const { id, userId, idImage } = req.body;
+  const { id,userId,idImage } = req.body;
 
   try {
-    const newSeniorRequest = await seniorRequest.create({
+    const newRefundRequest = await refundRequest.create({
       data: {
-        id,
+        
         userId,
-        idImage,
+        description,
         createdAt: new Date(),
-        status: SeniorRequestStatus.Pending,
+        status: RefundRequestStatus.Pending,
+        tripId
       },
     });
 
-    res.status(200).json({ data: newSeniorRequest });
+    res.status(200).json({ data: newRefundRequest });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
+id         Int                 @id @default(autoincrement())
+userId     String              @unique
+user       User                @relation(fields: [userId], references: [id])
+idImage    String
+status     SeniorRequestStatus
+reviewedBy String?
+createdAt  DateTime            @default(now())
 
-
+ 
 
 
 
@@ -207,8 +214,7 @@ export default {
   getUserSubscription,
   getUserTrips,
   registerUser,
-  createRefundRequest,
-  createSeniorRequest
+  createRefundRequest
 };
 
 

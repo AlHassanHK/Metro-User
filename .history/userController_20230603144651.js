@@ -4,7 +4,6 @@ import { PrismaClient, Prisma } from "@prisma/client";
 import { UserRole } from "@prisma/client";
 import { RouteId } from "@prisma/client";
 import { RefundRequestStatus } from "@prisma/client";
-import { SeniorRequestStatus } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -14,8 +13,6 @@ const prisma = new PrismaClient();
 
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
-const refundRequest = prisma.RefundRequest;
-const seniorRequest = prisma.SeniorRequest;
 
 const getAllUsers = async (req, res) => {
   try {
@@ -127,7 +124,7 @@ const getUserTrips = async (req, res) => {
 
 
 const registerUser = async (req, res) => {
-  const { id, name, phoneNumber, password, email } = req.body;
+  const { id, name, phoneNumber, password, email} = req.body;
 
   try {
     const newUser = await prisma.user.create({
@@ -149,51 +146,27 @@ const registerUser = async (req, res) => {
 };
 
 
-const createRefundRequest = async (req, res) => {
-  const { userId, description, tripId } = req.body;
+const  = async (req, res) => {
+  const { id, name, phoneNumber, password, email} = req.body;
 
   try {
-    const newRefundRequest = await refundRequest.create({
+    const newUser = await prisma.user.create({
       data: {
-        userId,
-        description,
-        createdAt: new Date(),
-        status: RefundRequestStatus.Pending,
-        tripId
+        id,  // saving Supabase user_id
+        name,
+        phoneNumber,
+        role: 'User',
+        password,
+        email,
+        isSenior: false,
       },
     });
 
-    res.status(200).json({ data: newRefundRequest });
+    res.status(200).json({ data: newUser });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
-const createSeniorRequest = async (req, res) => {
-  const { id, userId, idImage } = req.body;
-
-  try {
-    const newSeniorRequest = await seniorRequest.create({
-      data: {
-        id,
-        userId,
-        idImage,
-        createdAt: new Date(),
-        status: SeniorRequestStatus.Pending,
-      },
-    });
-
-    res.status(200).json({ data: newSeniorRequest });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-
-
-
-
-
 
 
 
@@ -206,9 +179,7 @@ export default {
   deleteUser,
   getUserSubscription,
   getUserTrips,
-  registerUser,
-  createRefundRequest,
-  createSeniorRequest
+  registerUser
 };
 
 

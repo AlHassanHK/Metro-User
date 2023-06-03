@@ -15,7 +15,6 @@ const prisma = new PrismaClient();
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
 const refundRequest = prisma.RefundRequest;
-const seniorRequest = prisma.SeniorRequest;
 
 const getAllUsers = async (req, res) => {
   try {
@@ -170,10 +169,10 @@ const createRefundRequest = async (req, res) => {
 };
 
 const createSeniorRequest = async (req, res) => {
-  const { id, userId, idImage } = req.body;
+  const { id,userId,idImage } = req.body;
 
   try {
-    const newSeniorRequest = await seniorRequest.create({
+    const newSeniorRequest = await refundRequest.create({
       data: {
         id,
         userId,
@@ -190,7 +189,7 @@ const createSeniorRequest = async (req, res) => {
 };
 
 
-
+ 
 
 
 
@@ -207,8 +206,7 @@ export default {
   getUserSubscription,
   getUserTrips,
   registerUser,
-  createRefundRequest,
-  createSeniorRequest
+  createRefundRequest
 };
 
 

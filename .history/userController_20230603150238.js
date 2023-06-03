@@ -15,7 +15,6 @@ const prisma = new PrismaClient();
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
 const refundRequest = prisma.RefundRequest;
-const seniorRequest = prisma.SeniorRequest;
 
 const getAllUsers = async (req, res) => {
   try {
