@@ -7,18 +7,26 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Subscription {
+  id         String           @id @default(uuid())
+  type       SubscriptionType
+  expiryDate DateTime
+  User       User[]
+}
+
 model User {
-  id             String            @id @unique
-  email          String            @unique
-  phoneNumber    String            @unique
+  id             String          @id @unique
+  email          String          @unique
+  phoneNumber    String          @unique
   name           String
   password       String
   role           UserRole
-  subscription   SubscriptionType?
   isSenior       Boolean
   seniorRequest  SeniorRequest?
   refundRequests RefundRequest[]
   rides          Trip[]
+  subscriptionId String?
+  subscription   Subscription?   @relation(fields: [subscriptionId], references: [id])
 }
 
 enum SubscriptionType {
