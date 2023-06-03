@@ -6,7 +6,7 @@ import { RouteId } from "@prisma/client";
 import { RefundRequestStatus } from "@prisma/client";
 import { SeniorRequestStatus } from "@prisma/client";
 import { SubscriptionType } from "@prisma/client";
-import { uuid } from 'uuidv4';
+
 const prisma = new PrismaClient();
 
 
@@ -191,27 +191,23 @@ const createSeniorRequest = async (req, res) => {
   }
 };
 
-// const updateSubscription = async (req, res) => {
-//   const { subscriptionType } = req.body;
+const updateSubscription = async (req, res) => {
+  const { subscriptionType } = req.body;
 
-//   try {
-//     const newSeniorRequest = await subscription.create({
-//       data: {
-//         id: uuid(),        
-//         type: subscriptionType=="Monthly"? SubscriptionType.Monthly : subscriptionType== 'Quarterly'? SubscriptionType.Quarterly:subscriptionType== 'Annual'? SubscriptionType.Annual : null ,
-//         expiryDate: (new Date().getMonth()+1)%12 + 1,
-//       },
-//     });
+  try {
+    const newSeniorRequest = await subscription.create({
+      data: {
+        id:uuid(),        
+        type:      SubscriptionType? subscriptionType : Sub ,
+        expiryDate: new Date(),
+      },
+    });
 
-
-
-
-
-//     res.status(200).json({ data: newSeniorRequest });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
+    res.status(200).json({ data: newSeniorRequest });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 
 
