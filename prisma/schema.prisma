@@ -27,6 +27,7 @@ model User {
   rides          Trip[]
   subscriptionId String?
   subscription   Subscription?   @relation(fields: [subscriptionId], references: [id])
+  nationalId     Int             @unique
 }
 
 enum SubscriptionType {
