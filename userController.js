@@ -192,27 +192,43 @@ const createSeniorRequest = async (req, res) => {
   }
 };
 
-// const updateSubscription = async (req, res) => {
-//   const { subscriptionType } = req.body;
+const createSubscription = async (req, res) => {
+  const { subscriptionType, userId } = req.body;
+  let subscriptionData = { type: null, expiryDate: null };
 
-//   try {
-//     const newSeniorRequest = await subscription.create({
-//       data: {
-//         id: uuid(),        
-//         type: subscriptionType=="Monthly"? SubscriptionType.Monthly : subscriptionType== 'Quarterly'? SubscriptionType.Quarterly:subscriptionType== 'Annual'? SubscriptionType.Annual : null ,
-//         expiryDate: (new Date().getMonth()+1)%12 + 1,
-//       },
-//     });
+  if (subscriptionType.toUpperCase() === "MONTHLY".toUpperCase()) {
+    subscriptionData.type = SubscriptionType.Monthly
+    subscriptionData.expiryDate = new Date(moment().add(1, "months").format());
 
+  } else if (subscriptionType.toUpperCase() === "QUARTERLY".toUpperCase()) {
+    subscriptionData.type = SubscriptionType.Quarterly
+    subscriptionData.expiryDate = new Date(moment().add(3, "months").format());
+  } else if (subscriptionType.toUpperCase() === "ANNUAL".toUpperCase()) {
+    subscriptionData.type = SubscriptionType.Annual
+    subscriptionData.expiryDate = new Date(moment().add(1, "years").format());
+  }
+  try {
+    const newSeniorRequest = await subscription.create({
+      data: {
+        id: uuid(),
+        ...subscriptionData
+      },
+    });
 
+    const subscribedUser = await users.update({
+      where: {
+        id: userId
+      },
+      data: {
+        subscriptionId: newSeniorRequest.id
+      }
+    })
 
-
-
-//     res.status(200).json({ data: newSeniorRequest });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
+    res.status(200).json({ seniorRequest: newSeniorRequest, subscribedUser   });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 
 
@@ -235,7 +251,8 @@ export default {
   getUserTrips,
   registerUser,
   createRefundRequest,
-  createSeniorRequest
+  createSeniorRequest,
+  createSubscription
 };
 
 
