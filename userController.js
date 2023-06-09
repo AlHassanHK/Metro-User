@@ -6,19 +6,15 @@ import { RouteId } from "@prisma/client";
 import { RefundRequestStatus } from "@prisma/client";
 import { SeniorRequestStatus } from "@prisma/client";
 import { SubscriptionType } from "@prisma/client";
-import { uuid } from 'uuidv4';
+import { uuid } from "uuidv4";
 import moment from "moment";
 const prisma = new PrismaClient();
-
-
-
-
-
 
 const users = prisma.User; //use users.findMany() for example, instead of typing prisma.User every time
 const refundRequest = prisma.RefundRequest;
 const seniorRequest = prisma.SeniorRequest;
 const subscription = prisma.Subscription;
+const trip = prisma.Trip;
 
 const getAllUsers = async (req, res) => {
   try {
@@ -36,7 +32,7 @@ const getUser = async (req, res) => {
       where: {
         id: id,
       },
-    })
+    });
     res.status(200).json(user);
   } catch (error) {
     res.status(400).send(error.message);
@@ -48,16 +44,16 @@ const updateUser = async (req, res) => {
     const { id, email, phoneNumber, name, password, isSenior } = req.body;
     const updatedUser = await users.update({
       where: {
-        id: id
+        id: id,
       },
       data: {
         name: name,
         email: email,
         phoneNumber: phoneNumber,
         password: password,
-        isSenior: isSenior
-      }
-    })
+        isSenior: isSenior,
+      },
+    });
     res.status(200).json(updatedUser);
   } catch (error) {
     res.status(400).send(error.message);
@@ -69,9 +65,9 @@ const deleteUser = async (req, res) => {
     const id = red.params.id;
     const deletedUser = await users.delete({
       where: {
-        id: id
-      }
-    })
+        id: id,
+      },
+    });
     res.status(200).json(deletedUser);
   } catch (error) {
     res.status(400).send(error.message);
@@ -83,14 +79,13 @@ const getUserSubscription = async (req, res) => {
     const id = parseInt(req.params.id);
     console.log(typeof id);
     const subscription = await users.findUnique({
-
       where: {
-        id: id
+        id: id,
       },
       select: {
         name: true,
-        subscription: true
-      }
+        subscription: true,
+      },
     });
     res.status(200).json(subscription);
   } catch (error) {
@@ -105,29 +100,21 @@ const getUserTrips = async (req, res) => {
     const result = await prisma.user.findUnique({
       where: {
         id: id,
-
       },
       include: {
         rides: true,
       },
-
-    })
+    });
     const rides = result.rides;
     const userName = result.name;
     filteredOutput["name"] = userName;
     filteredOutput["rideList"] = { ...rides };
 
-
-
-
-
-
     res.status(200).json(filteredOutput);
   } catch (error) {
     res.status(400).send(error.message);
   }
-}
-
+};
 
 const registerUser = async (req, res) => {
   const { id, name, phoneNumber, password, email } = req.body;
@@ -135,10 +122,10 @@ const registerUser = async (req, res) => {
   try {
     const newUser = await prisma.user.create({
       data: {
-        id,  // saving Supabase user_id
+        id, // saving Supabase user_id
         name,
         phoneNumber,
-        role: 'User',
+        role: "User",
         password,
         email,
         isSenior: false,
@@ -151,24 +138,37 @@ const registerUser = async (req, res) => {
   }
 };
 
-
 const createRefundRequest = async (req, res) => {
-  const { userId, description, tripId } = req.body;
-
   try {
-    const newRefundRequest = await refundRequest.create({
-      data: {
-        userId,
-        description,
-        createdAt: new Date(),
-        status: RefundRequestStatus.Pending,
-        tripId
-      },
+    const { userId, description, tripId } = req.body;
+    const result = await trip.findUnique({
+      where: {
+        id: tripId,
+      }
     });
-
-    res.status(200).json({ data: newRefundRequest });
+    console.log("result >>>>>", result);
+    const status = result.status;
+    console.log("status >>>>>>", status);
+    if (status.includes("ongoing")) {
+      const newRefundRequest = await refundRequest.create({
+        data: {
+          description: description,
+          status: RefundRequestStatus.Pending,
+          createdAt: new Date(),
+          tripId: tripId,
+          userId: userId,
+        },
+      });
+      res.status(200).json({ data: newRefundRequest });
+    } else {
+      res
+        .status(400)
+        .json({
+          error: "Request is rejected, trip status is no longer pending",
+        });
+    }
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(400).send(error.message);
   }
 };
 
@@ -197,50 +197,37 @@ const createSubscription = async (req, res) => {
   let subscriptionData = { type: null, expiryDate: null };
 
   if (subscriptionType.toUpperCase() === "MONTHLY".toUpperCase()) {
-    subscriptionData.type = SubscriptionType.Monthly
+    subscriptionData.type = SubscriptionType.Monthly;
     subscriptionData.expiryDate = new Date(moment().add(1, "months").format());
-
   } else if (subscriptionType.toUpperCase() === "QUARTERLY".toUpperCase()) {
-    subscriptionData.type = SubscriptionType.Quarterly
+    subscriptionData.type = SubscriptionType.Quarterly;
     subscriptionData.expiryDate = new Date(moment().add(3, "months").format());
   } else if (subscriptionType.toUpperCase() === "ANNUAL".toUpperCase()) {
-    subscriptionData.type = SubscriptionType.Annual
+    subscriptionData.type = SubscriptionType.Annual;
     subscriptionData.expiryDate = new Date(moment().add(1, "years").format());
   }
   try {
     const newSeniorRequest = await subscription.create({
       data: {
         id: uuid(),
-        ...subscriptionData
+        ...subscriptionData,
       },
     });
 
     const subscribedUser = await users.update({
       where: {
-        id: userId
+        id: userId,
       },
       data: {
-        subscriptionId: newSeniorRequest.id
-      }
-    })
+        subscriptionId: newSeniorRequest.id,
+      },
+    });
 
-    res.status(200).json({ seniorRequest: newSeniorRequest, subscribedUser   });
+    res.status(200).json({ seniorRequest: newSeniorRequest, subscribedUser });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 export default {
   getAllUsers,
@@ -252,8 +239,5 @@ export default {
   registerUser,
   createRefundRequest,
   createSeniorRequest,
-  createSubscription
+  createSubscription,
 };
-
-
-
