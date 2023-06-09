@@ -117,7 +117,7 @@ const getUserTrips = async (req, res) => {
 };
 
 const registerUser = async (req, res) => {
-  const { id, name, phoneNumber, password, email } = req.body;
+  const { id, name, phoneNumber, password, email, nationalId } = req.body;
 
   try {
     const newUser = await prisma.user.create({
@@ -129,6 +129,7 @@ const registerUser = async (req, res) => {
         password,
         email,
         isSenior: false,
+        nationalId
       },
     });
 
