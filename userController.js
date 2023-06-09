@@ -150,22 +150,27 @@ const createRefundRequest = async (req, res) => {
     const status = result.status;
     console.log("status >>>>>>", status);
     if (status.includes("ongoing")) {
-      const newRefundRequest = await refundRequest.create({
-        data: {
-          description: description,
-          status: RefundRequestStatus.Pending,
-          createdAt: new Date(),
-          tripId: tripId,
-          userId: userId,
-        },
-      });
-      res.status(200).json({ data: newRefundRequest });
-    } else {
-      res
-        .status(400)
-        .json({
-          error: "Request is rejected, trip status is no longer pending",
+      const tripRefunds = await refundRequest.findMany({
+        where: {
+          tripId: tripId
+        }
+      })
+      if (tripRefunds.length !== 0) {
+        res.send("A refund request already exists for this trip.");
+      } else {
+        const newRefundRequest = await refundRequest.create({
+          data: {
+            description: description,
+            status: RefundRequestStatus.Pending,
+            createdAt: new Date(),
+            tripId: tripId,
+            userId: userId,
+          },
         });
+        res.status(200).json({ data: newRefundRequest });
+      }
+    } else {
+      res.status(400).json({ error: "Request is rejected, trip status is no longer ongoing"});
     }
   } catch (error) {
     res.status(400).send(error.message);
