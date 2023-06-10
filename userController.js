@@ -76,7 +76,7 @@ const deleteUser = async (req, res) => {
 
 const getUserSubscription = async (req, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
     console.log(typeof id);
     const subscription = await users.findUnique({
       where: {
@@ -96,7 +96,7 @@ const getUserSubscription = async (req, res) => {
 const getUserTrips = async (req, res) => {
   let filteredOutput = {};
   try {
-    const id = parseInt(req.params.id);
+    const id = req.params.id;
     const result = await prisma.user.findUnique({
       where: {
         id: id,
