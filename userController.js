@@ -147,9 +147,9 @@ const createRefundRequest = async (req, res) => {
         id: tripId,
       }
     });
-    console.log("result >>>>>", result);
+ 
     const status = result.status;
-    console.log("status >>>>>>", status);
+  
     if (status.includes("ongoing")) {
       const tripRefunds = await refundRequest.findMany({
         where: {
@@ -157,7 +157,7 @@ const createRefundRequest = async (req, res) => {
         }
       })
       if (tripRefunds.length !== 0) {
-        res.send("A refund request already exists for this trip.");
+        res.status(400).json({error: "A refund request already exists for this trip."});
       } else {
         const newRefundRequest = await refundRequest.create({
           data: {
